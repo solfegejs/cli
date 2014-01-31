@@ -1,7 +1,7 @@
 {
     "name"          : "solfegejs-cli",
     "description"   : "Command Line Interface of SolfegeJS",
-    "version"       : "0.0.3",
+    "version"       : "1.0.0",
     "author"        : "neolao <contact@neolao.com>",
     "repository"    : "https://github.com/neolao/solfege-bundle-cli.git",
     "license"       : "MIT",
@@ -12,7 +12,7 @@
     },
     "dependencies"  :
     {
-        "solfegejs"     : "0.0.2",
-        "charm"         : "0.1"
+        "solfegejs"     : "1.0.x",
+        "charm"         : "0.1.x"
     }
 }

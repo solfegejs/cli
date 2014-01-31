@@ -170,7 +170,11 @@ proto.onApplicationStart = function*()
         .write('\n\n');
 
     // Display each bundle CLI
-    for (bundleId in this.commands) {
+    var sortedBundleIds = Object.keys(this.commands).sort();
+    var bundleCount = sortedBundleIds.length;
+    var bundleIndex;
+    for (bundleIndex = 0; bundleIndex < bundleCount; ++bundleIndex) {
+        bundleId = sortedBundleIds[bundleIndex];
         bundleCommands = this.commands[bundleId];
 
         // Display the bundle id
