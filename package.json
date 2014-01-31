@@ -12,7 +12,7 @@
     },
     "dependencies"  :
     {
-        "solfegejs"     : "0.0.2"
+        "solfegejs"     : "0.0.2",
         "charm"         : "0.1"
     }
 }
