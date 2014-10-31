@@ -10,16 +10,44 @@ describe('Console', function()
 {
     var Application = solfege.kernel.Application;
     var Console = require('../bundle/Console');
-    var application;
-    var output;
+    var value;
+
+
+    // Capture the output
+    var oldStdoutWrite, oldStderrWrite, output;
+    var quietModeOn = function()
+    {
+        output = '';
+        if (!oldStdoutWrite) {
+            oldStdoutWrite = process.stdout.write;
+            process.stdout.write = function(str){ output += str };
+        }
+        if (!oldStderrWrite) {
+            oldStderrWrite = process.stderr.write;
+            process.stderr.write = function(str){ output += str };
+        }
+    };
+    var quietModeOff = function()
+    {
+        if (oldStdoutWrite) {
+            process.stdout.write = oldStdoutWrite;
+            oldStdoutWrite = null;
+        }
+        if (oldStderrWrite) {
+            process.stderr.write = oldStderrWrite;
+            oldStderrWrite = null;
+        }
+    };
+
+
 
     /**
      * Initialize the test suite
      */
-    before(function()
+    var createApplication = function()
     {
         // Initialize the application
-        application = new Application(__dirname);
+        var application = new Application(__dirname);
 
         // Add the engine as a bundle
         application.addBundle('console', new Console);
@@ -41,14 +69,17 @@ describe('Console', function()
                 }
             },
             tic: function*() {
-                output = 'YEAH';
+                value = 'YEAH';
+                console.log('foo');
             },
             tac: function*() {
-                output = 'OK';
+                value = 'OK';
+                console.log('bar');
             }
         });
 
-    });
+        return application;
+    };
 
 
     /**
@@ -59,16 +90,50 @@ describe('Console', function()
         // Simple command
         it('should run a simple command', function(done)
         {
-            // Simulate a command arguments
+            var application = createApplication();
+            quietModeOn();
             process.argv = ['', '', 'fake-a:tic'];
             application.start();
-
             setTimeout(function() {
-                expect(output).to.equal('YEAH');
+                quietModeOff();
+                expect(value).to.equal('YEAH');
+                expect(output).to.equal('foo\n');
+                done();
+            }, 20);
+        });
+    });
+
+    /**
+     * Test the --quiet option
+     */
+    describe('execute method with quiet option', function()
+    {
+        it('should output nothing (option in the beginning)', function(done)
+        {
+            var application = createApplication();
+            quietModeOn();
+            process.argv = ['', '', '--quiet', 'fake-a:tic'];
+            application.start();
+            setTimeout(function() {
+                quietModeOff();
+                expect(value).to.equal('YEAH');
+                expect(output).to.equal('');
                 done();
             }, 20);
         });
 
-
+        it('should output nothing (option in the end)', function(done)
+        {
+            var application = createApplication();
+            quietModeOn();
+            process.argv = ['', '', 'fake-a:tac', '--quiet'];
+            application.start();
+            setTimeout(function() {
+                quietModeOff();
+                expect(value).to.equal('OK');
+                expect(output).to.equal('');
+                done();
+            }, 20);
+        });
     });
 });

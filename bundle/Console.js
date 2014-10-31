@@ -81,7 +81,7 @@ proto.onBundlesInitialized = function*()
  */
 proto.onApplicationStart = function*()
 {
-    var charm, parameters,
+    var charm, parameters, options,
         bundle, bundleId, bundleCommands,
         commandId, commandIdInfo, commandName, command, commandMethod;
 
@@ -89,10 +89,18 @@ proto.onApplicationStart = function*()
     charm = require('charm')();
     charm.pipe(process.stdout);
 
-    // Get the parameters
-    process.argv.shift();
-    process.argv.shift();
-    parameters = process.argv;
+    // Get the parameters and options
+    options = require("nomnom")
+        .option('quiet', {
+            flag: true
+        })
+        .parse();
+    parameters = options._;
+
+    // Quiet option
+    if (options.quiet) {
+        this.quietModeOn();
+    }
 
     // Execute the provided command name
     if (parameters.length > 0) {
@@ -194,6 +202,39 @@ proto.onApplicationStart = function*()
         }
 
         charm.write('\n');
+    }
+
+    // Turn off the quiet mode
+    this.quietModeOff();
+};
+
+/**
+ * Activate the quiet mode
+ */
+proto.quietModeOn = function()
+{
+    if (!this.oldStdoutWrite) {
+        this.oldStdoutWrite = process.stdout.write;
+        process.stdout.write = function(){};
+    }
+    if (!this.oldStderrWrite) {
+        this.oldStderrWrite = process.stderr.write;
+        process.stderr.write = function(){};
+    }
+};
+
+/**
+ * Deactivate the quiet mode
+ */
+proto.quietModeOff = function()
+{
+    if (this.oldStdoutWrite) {
+        process.stdout.write = this.oldStdoutWrite;
+        this.oldStdoutWrite = null;
+    }
+    if (this.oldStderrWrite) {
+        process.stderr.write = this.oldStderrWrite;
+        this.oldStderrWrite = null;
     }
 };
 
