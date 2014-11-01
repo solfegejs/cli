@@ -63,6 +63,11 @@ describe('Console', function()
                         },
                         tac: {
                             description: 'tac',
+                            help: [
+                                'line 1',
+                                'line 2',
+                                'line 3',
+                            ],
                             method: 'tac'
                         }
                     }
@@ -136,4 +141,24 @@ describe('Console', function()
             }, 20);
         });
     });
+
+    /**
+     * Test the --help option
+     */
+    describe('execute method with help option', function()
+    {
+        it('should output the additional description', function(done)
+        {
+            var application = createApplication();
+            quietModeOn();
+            process.argv = ['', '', 'fake-a:tac', '--help'];
+            application.start();
+            setTimeout(function() {
+                quietModeOff();
+                //expect(output).to.equal('SolfegeJS CLI');
+                done();
+            }, 20);
+        });
+    });
+
 });

@@ -40,6 +40,7 @@ proto.commands;
 /**
  * Set the application
  *
+ * @public
  * @param   {solfege.kernel.Application}    application     Application instance
  */
 proto.setApplication = function*(application)
@@ -90,80 +91,114 @@ proto.onApplicationStart = function*()
     charm.pipe(process.stdout);
 
     // Get the parameters and options
-    options = require("nomnom")
-        .option('quiet', {
-            flag: true
-        })
-        .parse();
+    options = require("minimist")(process.argv.slice(2));
     parameters = options._;
+
+    // Get the command id
+    commandId = null;
+    if (parameters.length > 0) {
+        commandId = parameters.shift();
+    }
 
     // Quiet option
     if (options.quiet) {
         this.quietModeOn();
     }
 
-    // Execute the provided command name
-    if (parameters.length > 0) {
-        commandId = parameters.shift();
-        commandIdInfo = commandId.split(':');
-
-        // Get the bundle id and the command name
-        if (commandIdInfo.length !== 2) {
-            charm.background('black').foreground('red')
-                .write('You must specify the bundle id and the command name\n');
-            return;
-        }
-        bundleId = commandIdInfo[0];
-        commandName = commandIdInfo[1];
-
-        // Get the commands of the bundle
-        if (!this.commands.hasOwnProperty(bundleId)) {
-            charm.background('black').foreground('red')
-                .write('The bundle ')
-                .foreground('yellow').write(bundleId)
-                .foreground('red').write(' is not available\n');
-            return;
-        }
-        bundleCommands = this.commands[bundleId];
-
-        // Get the command
-        if (!bundleCommands.hasOwnProperty(commandName)) {
-            charm.background('black').foreground('red')
-                .write('The bundle ')
-                .foreground('yellow').write(bundleId)
-                .foreground('red').write(' does not have the command ')
-                .foreground('green').write(commandName)
-                .write('\n');
-            return;
-        }
-        command = bundleCommands[commandName];
-
-        // Execute the command
-        commandMethod = command.method;
-        if (!commandMethod) {
-            charm.background('black').foreground('red')
-                .write('The command does not have a method to execute\n');
-            return;
-        }
-        bundle = this.bundles[bundleId];
-        if (typeof bundle[commandMethod] !== 'function') {
-            charm.background('black').foreground('red')
-                .write('The command ')
-                .foreground('green').write(commandName)
-                .foreground('red').write(' has an invalid method\n');
-            return;
-        }
-        if ('GeneratorFunction' !== bundle[commandMethod].constructor.name) {
-            charm.background('black').foreground('red')
-                .write('The command ')
-                .foreground('green').write(commandName)
-                .foreground('red').write(' must implement a generator method\n');
-            return;
-        }
-        yield bundle[commandMethod].apply(bundle, parameters);
-
+    // Help option
+    if (options.help && commandId) {
+        yield this.displayCommandHelp(commandId);
         return;
     }
+
+    // Execute the provided command name
+    if (commandId) {
+        yield this.executeCommand(commandId, parameters, options);
+        return;
+    }
+
+    // Display the available commands from bundles
+    yield this.displayGeneralHelp();
+
+    // Turn off the quiet mode
+    this.quietModeOff();
+};
+
+/**
+ * Execute a command from a bundle
+ *
+ * @param   {String}    commandId   The command id
+ * @param   {Array}     parameters  The command parameters
+ * @param   {Object}    options     The options
+ */
+proto.executeCommand = function*(commandId, parameters, options)
+{
+    commandIdInfo = commandId.split(':');
+
+    // Get the bundle id and the command name
+    if (commandIdInfo.length !== 2) {
+        charm.background('black').foreground('red')
+            .write('You must specify the bundle id and the command name\n');
+        return;
+    }
+    bundleId = commandIdInfo[0];
+    commandName = commandIdInfo[1];
+
+    // Get the commands of the bundle
+    if (!this.commands.hasOwnProperty(bundleId)) {
+        charm.background('black').foreground('red')
+            .write('The bundle ')
+            .foreground('yellow').write(bundleId)
+            .foreground('red').write(' is not available\n');
+        return;
+    }
+    bundleCommands = this.commands[bundleId];
+
+    // Get the command
+    if (!bundleCommands.hasOwnProperty(commandName)) {
+        charm.background('black').foreground('red')
+            .write('The bundle ')
+            .foreground('yellow').write(bundleId)
+            .foreground('red').write(' does not have the command ')
+            .foreground('green').write(commandName)
+            .write('\n');
+        return;
+    }
+    command = bundleCommands[commandName];
+
+    // Execute the command
+    commandMethod = command.method;
+    if (!commandMethod) {
+        charm.background('black').foreground('red')
+            .write('The command does not have a method to execute\n');
+        return;
+    }
+    bundle = this.bundles[bundleId];
+    if (typeof bundle[commandMethod] !== 'function') {
+        charm.background('black').foreground('red')
+            .write('The command ')
+            .foreground('green').write(commandName)
+            .foreground('red').write(' has an invalid method\n');
+        return;
+    }
+    if ('GeneratorFunction' !== bundle[commandMethod].constructor.name) {
+        charm.background('black').foreground('red')
+            .write('The command ')
+            .foreground('green').write(commandName)
+            .foreground('red').write(' must implement a generator method\n');
+        return;
+    }
+    yield bundle[commandMethod].apply(bundle, parameters);
+};
+
+/**
+ * Display the available commands from bundles
+ */
+proto.displayGeneralHelp = function*()
+{
+    // Initialize the charm module
+    var charm = require('charm')();
+    charm.pipe(process.stdout);
 
 
     // Display the header
@@ -203,9 +238,43 @@ proto.onApplicationStart = function*()
 
         charm.write('\n');
     }
+};
 
-    // Turn off the quiet mode
-    this.quietModeOff();
+/**
+ * Display the available options for the specified command
+ *
+ * @param   {String}    commandId   The command id
+ */
+proto.displayCommandHelp = function*(commandId)
+{
+    // Initialize the charm module
+    var charm = require('charm')();
+    charm.pipe(process.stdout);
+
+
+    // Get the bundle id and the command name
+    commandIdInfo = commandId.split(':');
+    if (commandIdInfo.length !== 2) {
+        charm.background('black').foreground('red')
+            .write('You must specify the bundle id and the command name\n');
+        return;
+    }
+    bundleId = commandIdInfo[0];
+    commandName = commandIdInfo[1];
+
+
+    // Display the header
+    charm.background('black').foreground('cyan')
+        .write('SolfegeJS CLI\n')
+        .write('-------------\n\n')
+        .foreground('white').write('Usage: ')
+        .foreground('yellow').write(bundleId)
+        .foreground('white').write(':')
+        .foreground('green').write(commandName)
+        .foreground('white').write(' [argument1] [argument2] ...')
+        .write('\n\n');
+
+
 };
 
 /**
