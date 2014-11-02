@@ -2,6 +2,7 @@ var solfege = require('solfegejs');
 var co = require('co');
 var expect = require('chai').expect;
 var should = require('chai').should();
+var colors = require('colors');
 
 /**
  * Test the Console class
@@ -149,13 +150,22 @@ describe('Console', function()
     {
         it('should output the additional description', function(done)
         {
+            var expectedOutput = 'SolfegeJS CLI'.bgBlack.cyan + '\n' +
+                    '-------------\n'.bgBlack.cyan + '\n' +
+                    'Usage: '.white + 
+                    'fake-a'.yellow +
+                    ':'.white +
+                    'tac'.green +
+                    ' [argument1] [argument2] ...\n'.white + '\n';
+
+
             var application = createApplication();
             quietModeOn();
             process.argv = ['', '', 'fake-a:tac', '--help'];
             application.start();
             setTimeout(function() {
                 quietModeOff();
-                //expect(output).to.equal('SolfegeJS CLI');
+                expect(output).to.equal(expectedOutput);
                 done();
             }, 20);
         });

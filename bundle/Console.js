@@ -1,4 +1,5 @@
 var solfege = require('solfegejs');
+var colors = require('colors');
 
 /**
  * The command line interface of SolfegeJS
@@ -82,13 +83,10 @@ proto.onBundlesInitialized = function*()
  */
 proto.onApplicationStart = function*()
 {
-    var charm, parameters, options,
+    var parameters, options,
         bundle, bundleId, bundleCommands,
-        commandId, commandIdInfo, commandName, command, commandMethod;
+        commandId;
 
-    // Initialize the charm module
-    charm = require('charm')();
-    charm.pipe(process.stdout);
 
     // Get the parameters and options
     options = require("minimist")(process.argv.slice(2));
@@ -133,59 +131,51 @@ proto.onApplicationStart = function*()
  */
 proto.executeCommand = function*(commandId, parameters, options)
 {
-    commandIdInfo = commandId.split(':');
-
     // Get the bundle id and the command name
+    var commandIdInfo = commandId.split(':');
     if (commandIdInfo.length !== 2) {
-        charm.background('black').foreground('red')
-            .write('You must specify the bundle id and the command name\n');
+        console.error('You must specify the bundle id and the command name'.bgBlack.red);
         return;
     }
-    bundleId = commandIdInfo[0];
-    commandName = commandIdInfo[1];
+    var bundleId = commandIdInfo[0];
+    var commandName = commandIdInfo[1];
 
     // Get the commands of the bundle
     if (!this.commands.hasOwnProperty(bundleId)) {
-        charm.background('black').foreground('red')
-            .write('The bundle ')
-            .foreground('yellow').write(bundleId)
-            .foreground('red').write(' is not available\n');
+        console.error('The bundle '.bgBlack.red +
+                      bundleId.bgBlack.yellow +
+                      ' is not available'.bgBlack.red);
         return;
     }
-    bundleCommands = this.commands[bundleId];
+    var bundleCommands = this.commands[bundleId];
 
     // Get the command
     if (!bundleCommands.hasOwnProperty(commandName)) {
-        charm.background('black').foreground('red')
-            .write('The bundle ')
-            .foreground('yellow').write(bundleId)
-            .foreground('red').write(' does not have the command ')
-            .foreground('green').write(commandName)
-            .write('\n');
+        console.error('The bundle '.bgBlack.red +
+                      bundleId.bgBlack.yellow +
+                      ' does not have the command '.bgBlack.red +
+                      commandName.green);
         return;
     }
-    command = bundleCommands[commandName];
+    var command = bundleCommands[commandName];
 
     // Execute the command
-    commandMethod = command.method;
+    var commandMethod = command.method;
     if (!commandMethod) {
-        charm.background('black').foreground('red')
-            .write('The command does not have a method to execute\n');
+        console.error('The command does not have a method to execute'.bgBlack.red);
         return;
     }
-    bundle = this.bundles[bundleId];
+    var bundle = this.bundles[bundleId];
     if (typeof bundle[commandMethod] !== 'function') {
-        charm.background('black').foreground('red')
-            .write('The command ')
-            .foreground('green').write(commandName)
-            .foreground('red').write(' has an invalid method\n');
+        console.error('The command '.bgBlack.red +
+                      commandName.bgBlack.green +
+                      ' has an invalid method '.bgBlack.red);
         return;
     }
     if ('GeneratorFunction' !== bundle[commandMethod].constructor.name) {
-        charm.background('black').foreground('red')
-            .write('The command ')
-            .foreground('green').write(commandName)
-            .foreground('red').write(' must implement a generator method\n');
+        console.error('The command '.bgBlack.red +
+                      commandName.bgBlack.green +
+                      ' must implement a generator method'.bgBlack.red);
         return;
     }
     yield bundle[commandMethod].apply(bundle, parameters);
@@ -196,47 +186,41 @@ proto.executeCommand = function*(commandId, parameters, options)
  */
 proto.displayGeneralHelp = function*()
 {
-    // Initialize the charm module
-    var charm = require('charm')();
-    charm.pipe(process.stdout);
-
-
     // Display the header
-    charm.background('black').foreground('cyan')
-        .write('SolfegeJS CLI\n')
-        .write('-------------\n\n')
-        .foreground('white').write('Usage: ')
-        .foreground('yellow').write('bundleId')
-        .foreground('white').write(':')
-        .foreground('green').write('commandName')
-        .foreground('white').write(' [argument1] [argument2] ...')
-        .write('\n\n');
+    console.info('SolfegeJS CLI'.bgBlack.cyan);
+    console.info('-------------\n'.bgBlack.cyan)
+    console.info('Usage: '.white + 
+                 'bundleId'.yellow +
+                 ':'.white +
+                 'commandName'.green +
+                 ' [argument1] [argument2] ...\n'.white);
+
 
     // Display each bundle CLI
     var sortedBundleIds = Object.keys(this.commands).sort();
     var bundleCount = sortedBundleIds.length;
     var bundleIndex;
     for (bundleIndex = 0; bundleIndex < bundleCount; ++bundleIndex) {
-        bundleId = sortedBundleIds[bundleIndex];
-        bundleCommands = this.commands[bundleId];
+        var bundleId = sortedBundleIds[bundleIndex];
+        var bundleCommands = this.commands[bundleId];
 
         // Display the bundle id
-        charm.foreground('yellow').write(bundleId + '\n');
+        console.info(bundleId.yellow);
         for (commandName in bundleCommands) {
-            command = bundleCommands[commandName];
+            var command = bundleCommands[commandName];
 
             // Display the command name
-            charm.foreground('white').write('  - ').foreground('green').write(commandName);
+            process.stdout.write('  - '.white + commandName.green);
 
             // Display the description
             if (command.description) {
-                 charm.foreground('white').write(' : ' + command.description);
+                 process.stdout.write(' : '.white + command.description);
             }
 
-            charm.write('\n');
+            process.stdout.write('\n');
         }
 
-        charm.write('\n');
+        process.stdout.write('\n');
     }
 };
 
@@ -247,33 +231,24 @@ proto.displayGeneralHelp = function*()
  */
 proto.displayCommandHelp = function*(commandId)
 {
-    // Initialize the charm module
-    var charm = require('charm')();
-    charm.pipe(process.stdout);
-
-
     // Get the bundle id and the command name
-    commandIdInfo = commandId.split(':');
+    var commandIdInfo = commandId.split(':');
     if (commandIdInfo.length !== 2) {
-        charm.background('black').foreground('red')
-            .write('You must specify the bundle id and the command name\n');
+        console.info('You must specify the bundle id and the command name'.bgBlack.red);
         return;
     }
-    bundleId = commandIdInfo[0];
-    commandName = commandIdInfo[1];
+    var bundleId = commandIdInfo[0];
+    var commandName = commandIdInfo[1];
 
 
     // Display the header
-    charm.background('black').foreground('cyan')
-        .write('SolfegeJS CLI\n')
-        .write('-------------\n\n')
-        .foreground('white').write('Usage: ')
-        .foreground('yellow').write(bundleId)
-        .foreground('white').write(':')
-        .foreground('green').write(commandName)
-        .foreground('white').write(' [argument1] [argument2] ...')
-        .write('\n\n');
-
+    console.info('SolfegeJS CLI'.bgBlack.cyan);
+    console.info('-------------\n'.bgBlack.cyan)
+    console.info('Usage: '.white + 
+                 bundleId.yellow +
+                ':'.white +
+                commandName.green +
+                ' [argument1] [argument2] ...\n'.white);
 
 };
 
