@@ -63,7 +63,7 @@ describe('Console', function()
                             method: 'tic'
                         },
                         tac: {
-                            description: 'tac',
+                            description: 'tac short desc',
                             help: [
                                 'line 1',
                                 'line 2',
@@ -152,11 +152,15 @@ describe('Console', function()
         {
             var expectedOutput = 'SolfegeJS CLI'.bgBlack.cyan + '\n' +
                     '-------------\n'.bgBlack.cyan + '\n' +
-                    'Usage: '.white + 
-                    'fake-a'.yellow +
-                    ':'.white +
-                    'tac'.green +
-                    ' [argument1] [argument2] ...\n'.white + '\n';
+                    'Usage: ' + 
+                    'fake-a'.bgBlack.yellow +
+                    ':' +
+                    'tac'.bgBlack.green +
+                    ' [argument1] [argument2] ...\n' + '\n' +
+                    'tac short desc' + '\n\n' +
+                    'line 1' + '\n' +
+                    'line 2' + '\n' +
+                    'line 3' + '\n';
 
 
             var application = createApplication();

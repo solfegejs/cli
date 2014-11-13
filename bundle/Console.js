@@ -18,7 +18,6 @@ var proto = Console.prototype;
  * The application instance
  *
  * @type {solfege.kernel.Application}
- * @api private
  */
 proto.application;
 
@@ -26,7 +25,6 @@ proto.application;
  * The bundle list
  *
  * @type {Object}
- * @api private
  */
 proto.bundles;
 
@@ -34,7 +32,6 @@ proto.bundles;
  * The command list per bundle
  *
  * @type {Object}
- * @api private
  */
 proto.commands;
 
@@ -189,11 +186,11 @@ proto.displayGeneralHelp = function*()
     // Display the header
     console.info('SolfegeJS CLI'.bgBlack.cyan);
     console.info('-------------\n'.bgBlack.cyan)
-    console.info('Usage: '.white + 
-                 'bundleId'.yellow +
-                 ':'.white +
-                 'commandName'.green +
-                 ' [argument1] [argument2] ...\n'.white);
+    console.info('Usage: ' + 
+                 'bundleId'.bgBlack.yellow +
+                 ':' +
+                 'commandName'.bgBlack.green +
+                 ' [argument1] [argument2] ...\n');
 
 
     // Display each bundle CLI
@@ -210,11 +207,11 @@ proto.displayGeneralHelp = function*()
             var command = bundleCommands[commandName];
 
             // Display the command name
-            process.stdout.write('  - '.white + commandName.green);
+            process.stdout.write('  - ' + commandName.bgBlack.green);
 
             // Display the description
             if (command.description) {
-                 process.stdout.write(' : '.white + command.description);
+                 process.stdout.write(' : ' + command.description);
             }
 
             process.stdout.write('\n');
@@ -240,16 +237,37 @@ proto.displayCommandHelp = function*(commandId)
     var bundleId = commandIdInfo[0];
     var commandName = commandIdInfo[1];
 
+    // Check if the bundle and the command exists
+    if (!this.commands.hasOwnProperty(bundleId) || !this.commands[bundleId].hasOwnProperty(commandName)) {
+        console.info('Command not found'.bgBlack.red);
+        return;
+    }
 
     // Display the header
     console.info('SolfegeJS CLI'.bgBlack.cyan);
     console.info('-------------\n'.bgBlack.cyan)
-    console.info('Usage: '.white + 
-                 bundleId.yellow +
-                ':'.white +
-                commandName.green +
-                ' [argument1] [argument2] ...\n'.white);
+    console.info('Usage: ' + 
+                 bundleId.bgBlack.yellow +
+                ':' +
+                commandName.bgBlack.green +
+                ' [argument1] [argument2] ...\n');
 
+
+    // Display the command informations
+    var information = this.commands[bundleId][commandName];
+    if (information.description) {
+        console.info(information.description);
+    }
+    if (information.help) {
+        console.info();
+        if (Array.isArray(information.help)) {
+            information.help.forEach(function(line) {
+                console.info(line);
+            });
+        } else {
+            console.info(information.help);
+        }
+    }
 };
 
 /**
