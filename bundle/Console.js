@@ -52,6 +52,48 @@ proto.setApplication = function*(application)
 };
 
 /**
+ * Write in the standard output
+ *
+ * @public
+ * @param   {string}    message             The message
+ * @param   {integer}   level               The verbose level
+ * @param   {string}    foregroundColor     The foreground color
+ * @param   {string}    backgroundColor     The background color
+ */
+proto.output = function(message, level, foregroundColor, backgroundColor)
+{
+    var options = require("minimist")(process.argv.slice(2));
+
+    // Get levels
+    var maxLevel = 0;
+    if (options.v) {
+        maxLevel = 1;
+    }
+    if (options.vv) {
+        maxLevel = 2;
+    }
+    if (options.vvv) {
+        maxLevel = 3;
+    }
+    if (!level) {
+        level = 0;
+    }
+
+    // Text colors
+    if (foregroundColor && colors.styles.hasOwnProperty(foregroundColor)) {
+        message = message[foregroundColor];
+    }
+    if (backgroundColor && colors.styles.hasOwnProperty(backgroundColor + 'BG')) {
+        message = message[backgroundColor + 'BG'];
+    }
+
+    // Output the message
+    if (level <= maxLevel) {
+        console.info(message);
+    }
+};
+
+/**
  * Executed when the bundles of the application are initialized
  */
 proto.onBundlesInitialized = function*()
