@@ -19,21 +19,21 @@ var proto = Console.prototype;
  *
  * @type {solfege.kernel.Application}
  */
-proto.application;
+proto.application = null;
 
 /**
  * The bundle list
  *
  * @type {Object}
  */
-proto.bundles;
+proto.bundles = null;
 
 /**
  * The command list per bundle
  *
  * @type {Object}
  */
-proto.commands;
+proto.commands = null;
 
 /**
  * Set the application
@@ -227,7 +227,7 @@ proto.displayGeneralHelp = function*()
 {
     // Display the header
     console.info('SolfegeJS CLI'.bgBlack.cyan);
-    console.info('-------------\n'.bgBlack.cyan)
+    console.info('-------------\n'.bgBlack.cyan);
     console.info('Usage: ' + 
                  'bundleId'.bgBlack.yellow +
                  ':' +
@@ -242,6 +242,7 @@ proto.displayGeneralHelp = function*()
     for (bundleIndex = 0; bundleIndex < bundleCount; ++bundleIndex) {
         var bundleId = sortedBundleIds[bundleIndex];
         var bundleCommands = this.commands[bundleId];
+        var commandName;
 
         // Display the bundle id
         console.info(bundleId.yellow);
@@ -287,7 +288,7 @@ proto.displayCommandHelp = function*(commandId)
 
     // Display the header
     console.info('SolfegeJS CLI'.bgBlack.cyan);
-    console.info('-------------\n'.bgBlack.cyan)
+    console.info('-------------\n'.bgBlack.cyan);
     console.info('Usage: ' + 
                  bundleId.bgBlack.yellow +
                 ':' +
