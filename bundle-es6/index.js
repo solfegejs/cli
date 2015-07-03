@@ -1,7 +1,7 @@
 /**
  * @namespace solfege.bundle.cli
  */
-import {createPackage} from 'solfege.util.ObjectProxy';
+import solfege from "solfegejs";
 
-module.exports = createPackage(__dirname);
+export default solfege.util.ObjectProxy.createPackage(__dirname);
 
