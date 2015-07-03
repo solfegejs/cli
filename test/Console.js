@@ -10,7 +10,7 @@ var colors = require('colors');
 describe('Console', function()
 {
     var Application = solfege.kernel.Application;
-    var Console = require('../bundle/Console');
+    var Console = require('../bundle-es5/Console');
     var value;
 
 
