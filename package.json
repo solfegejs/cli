@@ -1,11 +1,11 @@
 {
     "name"          : "solfegejs-cli",
     "description"   : "Command Line Interface of SolfegeJS",
-    "version"       : "1.3.2",
+    "version"       : "1.4.0",
     "author"        : "neolao <contact@neolao.com>",
     "repository"    : "https://github.com/neolao/solfege-bundle-cli.git",
     "license"       : "MIT",
-    "main"          : "bundle-es5/index.js",
+    "main"          : "bundle/index.js",
     "engines"       : 
     {
         "node": ">= 0.12"
@@ -29,9 +29,9 @@
     {
         "test"              : "mocha --harmony --harmony-proxies --recursive --reporter spec --bail --async-only",
         "coverage"          : "node --harmony --harmony-proxies ./node_modules/istanbul-harmony/lib/cli.js cover ./node_modules/mocha/bin/_mocha",
-        "es6-watch"         : "babel bundle-es6 --blacklist=regenerator --watch --out-dir bundle-es5",
-        "es6-compile"       : "babel bundle-es6 --blacklist=regenerator --out-dir bundle-es5",
-        "example-compile"   : "babel example/bundle-es6 --blacklist=regenerator --out-dir example/bundle-es5",
-        "example"           : "node --harmony --harmony-proxies ./example/bundle-es5/console.js"
+        "es6-watch"         : "babel bundle-es6 --blacklist=regenerator --watch --out-dir bundle",
+        "es6-compile"       : "babel bundle-es6 --blacklist=regenerator --out-dir bundle",
+        "example-compile"   : "babel example/bundle-es6 --blacklist=regenerator --out-dir example/bundle",
+        "example"           : "node --harmony --harmony-proxies ./example/bundle/console.js"
     }
 }

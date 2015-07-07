@@ -14,6 +14,9 @@ export default class Console
      */
     constructor()
     {
+        // Initialize the configuration
+        this._configuration = require(__dirname + "/../config/default");
+
         // Initialize the bundle list
         this._bundles = {};
 
@@ -30,6 +33,17 @@ export default class Console
     get application()
     {
         return this._application;
+    }
+
+    /**
+     * The configuration
+     *
+     * @public
+     * @member  {Object}
+     */
+    get configuration()
+    {
+        return this._configuration;
     }
 
     /**
@@ -245,8 +259,12 @@ export default class Console
     *displayGeneralHelp()
     {
         // Display the header
-        console.info('SolfegeJS CLI'.bgBlack.cyan);
-        console.info('-------------\n'.bgBlack.cyan);
+        let title = "SolfegeJS CLI";
+        if (this.configuration && this.configuration.title) {
+            title = this.configuration.title;
+        }
+        console.info(title.bgBlack.cyan);
+        console.info("-".repeat(title.length).bgBlack.cyan+"\n");
         console.info('Usage: ' + 
                      'bundleId'.bgBlack.yellow +
                      ':' +

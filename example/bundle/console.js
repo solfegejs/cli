@@ -6,11 +6,11 @@ var _solfegejs = require("solfegejs");
 
 var _solfegejs2 = _interopRequireDefault(_solfegejs);
 
-var _bundleEs5 = require("../../bundle-es5");
+var _bundle = require("../../bundle");
 
-var _bundleEs52 = _interopRequireDefault(_bundleEs5);
+var _bundle2 = _interopRequireDefault(_bundle);
 
 var application = new _solfegejs2["default"].kernel.Application(__dirname);
-application.addBundle("console", new _bundleEs52["default"].Console());
+application.addBundle("console", new _bundle2["default"].Console());
 
 application.start();
