@@ -323,7 +323,7 @@ export default class Console
         if (information.help) {
             console.info();
             if (Array.isArray(information.help)) {
-                information.help.forEach(function(line) {
+                information.help.forEach(line => {
                     console.info(line);
                 });
             } else {

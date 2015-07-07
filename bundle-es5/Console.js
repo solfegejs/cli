@@ -1,18 +1,14 @@
 "use strict";
 
-var _createClass = require("babel-runtime/helpers/create-class")["default"];
-
-var _classCallCheck = require("babel-runtime/helpers/class-call-check")["default"];
-
-var _regeneratorRuntime = require("babel-runtime/regenerator")["default"];
-
-var _Object$keys = require("babel-runtime/core-js/object/keys")["default"];
-
-var _interopRequireDefault = require("babel-runtime/helpers/interop-require-default")["default"];
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _solfegejs = require("solfegejs");
 
@@ -56,24 +52,14 @@ var Console = (function () {
          * @public
          * @param   {solfege.kernel.Application}    application     Application instance
          */
-        value: _regeneratorRuntime.mark(function setApplication(application) {
-            var bindGenerator;
-            return _regeneratorRuntime.wrap(function setApplication$(context$2$0) {
-                while (1) switch (context$2$0.prev = context$2$0.next) {
-                    case 0:
-                        this._application = application;
+        value: function* setApplication(application) {
+            this._application = application;
 
-                        bindGenerator = _solfegejs2["default"].util.Function.bindGenerator;
-
-                        this._application.on(_solfegejs2["default"].kernel.Application.EVENT_BUNDLES_INITIALIZED, bindGenerator(this, this.onBundlesInitialized));
-                        this._application.on(_solfegejs2["default"].kernel.Application.EVENT_START, bindGenerator(this, this.onApplicationStart));
-
-                    case 4:
-                    case "end":
-                        return context$2$0.stop();
-                }
-            }, setApplication, this);
-        })
+            // Set listeners
+            var bindGenerator = _solfegejs2["default"].util.Function.bindGenerator;
+            this._application.on(_solfegejs2["default"].kernel.Application.EVENT_BUNDLES_INITIALIZED, bindGenerator(this, this.onBundlesInitialized));
+            this._application.on(_solfegejs2["default"].kernel.Application.EVENT_START, bindGenerator(this, this.onApplicationStart));
+        }
     }, {
         key: "output",
 
@@ -123,112 +109,67 @@ var Console = (function () {
         /**
          * Executed when the bundles of the application are initialized
          */
-        value: _regeneratorRuntime.mark(function onBundlesInitialized() {
-            var bundleId, bundle, bundleConfiguration;
-            return _regeneratorRuntime.wrap(function onBundlesInitialized$(context$2$0) {
-                while (1) switch (context$2$0.prev = context$2$0.next) {
-                    case 0:
-                        this._bundles = this.application.getBundles();
+        value: function* onBundlesInitialized() {
+            this._bundles = this.application.getBundles();
 
-                        context$2$0.t0 = _regeneratorRuntime.keys(this._bundles);
+            // Get the available commands of each bundle
+            for (var bundleId in this._bundles) {
+                var bundle = this._bundles[bundleId];
 
-                    case 2:
-                        if ((context$2$0.t1 = context$2$0.t0()).done) {
-                            context$2$0.next = 11;
-                            break;
-                        }
-
-                        bundleId = context$2$0.t1.value;
-                        bundle = this._bundles[bundleId];
-
-                        if (!(typeof bundle.getConfiguration !== "function")) {
-                            context$2$0.next = 7;
-                            break;
-                        }
-
-                        return context$2$0.abrupt("continue", 2);
-
-                    case 7:
-                        bundleConfiguration = bundle.getConfiguration();
-
-                        // Get the command list
-                        if (bundleConfiguration.hasOwnProperty("cli")) {
-                            this._commands[bundleId] = bundleConfiguration.cli;
-                        }
-                        context$2$0.next = 2;
-                        break;
-
-                    case 11:
-                    case "end":
-                        return context$2$0.stop();
+                // Get the configuration of the bundle
+                if (typeof bundle.getConfiguration !== "function") {
+                    continue;
                 }
-            }, onBundlesInitialized, this);
-        })
+                var bundleConfiguration = bundle.getConfiguration();
+
+                // Get the command list
+                if (bundleConfiguration.hasOwnProperty("cli")) {
+                    this._commands[bundleId] = bundleConfiguration.cli;
+                }
+            }
+        }
     }, {
         key: "onApplicationStart",
 
         /**
          * Executed when the application starts
          */
-        value: _regeneratorRuntime.mark(function onApplicationStart() {
+        value: function* onApplicationStart() {
             var parameters, options, bundle, bundleId, bundleCommands, commandId;
-            return _regeneratorRuntime.wrap(function onApplicationStart$(context$2$0) {
-                while (1) switch (context$2$0.prev = context$2$0.next) {
-                    case 0:
 
-                        // Get the parameters and options
-                        options = (0, _minimist2["default"])(process.argv.slice(2));
-                        parameters = options._;
+            // Get the parameters and options
+            options = (0, _minimist2["default"])(process.argv.slice(2));
+            parameters = options._;
 
-                        // Get the command id
-                        commandId = null;
-                        if (parameters.length > 0) {
-                            commandId = parameters.shift();
-                        }
+            // Get the command id
+            commandId = null;
+            if (parameters.length > 0) {
+                commandId = parameters.shift();
+            }
 
-                        // Quiet option
-                        if (options.quiet) {
-                            this.quietModeOn();
-                        }
+            // Quiet option
+            if (options.quiet) {
+                this.quietModeOn();
+            }
 
-                        if (!(options.help && commandId)) {
-                            context$2$0.next = 9;
-                            break;
-                        }
+            // Help option
+            if (options.help && commandId) {
+                yield this.displayCommandHelp(commandId);
+                return;
+            }
 
-                        context$2$0.next = 8;
-                        return this.displayCommandHelp(commandId);
+            // Execute the provided command name
+            if (commandId) {
+                yield this.executeCommand(commandId, parameters, options);
+                return;
+            }
 
-                    case 8:
-                        return context$2$0.abrupt("return");
+            // Display the available commands from bundles
+            yield this.displayGeneralHelp();
 
-                    case 9:
-                        if (!commandId) {
-                            context$2$0.next = 13;
-                            break;
-                        }
-
-                        context$2$0.next = 12;
-                        return this.executeCommand(commandId, parameters, options);
-
-                    case 12:
-                        return context$2$0.abrupt("return");
-
-                    case 13:
-                        context$2$0.next = 15;
-                        return this.displayGeneralHelp();
-
-                    case 15:
-
-                        // Turn off the quiet mode
-                        this.quietModeOff();
-
-                    case 16:
-                    case "end":
-                        return context$2$0.stop();
-                }
-            }, onApplicationStart, this);
-        })
+            // Turn off the quiet mode
+            this.quietModeOff();
+        }
     }, {
         key: "executeCommand",
 
@@ -239,134 +180,87 @@ var Console = (function () {
          * @param   {Array}     parameters  The command parameters
          * @param   {Object}    options     The options
          */
-        value: _regeneratorRuntime.mark(function executeCommand(commandId, parameters, options) {
-            var commandIdInfo, bundleId, commandName, bundleCommands, command, commandMethod, bundle;
-            return _regeneratorRuntime.wrap(function executeCommand$(context$2$0) {
-                while (1) switch (context$2$0.prev = context$2$0.next) {
-                    case 0:
-                        commandIdInfo = commandId.split(":");
+        value: function* executeCommand(commandId, parameters, options) {
+            // Get the bundle id and the command name
+            var commandIdInfo = commandId.split(":");
+            if (commandIdInfo.length !== 2) {
+                console.error("You must specify the bundle id and the command name".bgBlack.red);
+                return;
+            }
+            var bundleId = commandIdInfo[0];
+            var commandName = commandIdInfo[1];
 
-                        if (!(commandIdInfo.length !== 2)) {
-                            context$2$0.next = 4;
-                            break;
-                        }
+            // Get the commands of the bundle
+            if (!this._commands.hasOwnProperty(bundleId)) {
+                console.error("The bundle ".bgBlack.red + bundleId.bgBlack.yellow + " is not available".bgBlack.red);
+                return;
+            }
+            var bundleCommands = this._commands[bundleId];
 
-                        console.error("You must specify the bundle id and the command name".bgBlack.red);
-                        return context$2$0.abrupt("return");
+            // Get the command
+            if (!bundleCommands.hasOwnProperty(commandName)) {
+                console.error("The bundle ".bgBlack.red + bundleId.bgBlack.yellow + " does not have the command ".bgBlack.red + commandName.green);
+                return;
+            }
+            var command = bundleCommands[commandName];
 
-                    case 4:
-                        bundleId = commandIdInfo[0];
-                        commandName = commandIdInfo[1];
-
-                        if (this._commands.hasOwnProperty(bundleId)) {
-                            context$2$0.next = 9;
-                            break;
-                        }
-
-                        console.error("The bundle ".bgBlack.red + bundleId.bgBlack.yellow + " is not available".bgBlack.red);
-                        return context$2$0.abrupt("return");
-
-                    case 9:
-                        bundleCommands = this._commands[bundleId];
-
-                        if (bundleCommands.hasOwnProperty(commandName)) {
-                            context$2$0.next = 13;
-                            break;
-                        }
-
-                        console.error("The bundle ".bgBlack.red + bundleId.bgBlack.yellow + " does not have the command ".bgBlack.red + commandName.green);
-                        return context$2$0.abrupt("return");
-
-                    case 13:
-                        command = bundleCommands[commandName];
-                        commandMethod = command.method;
-
-                        if (commandMethod) {
-                            context$2$0.next = 18;
-                            break;
-                        }
-
-                        console.error("The command does not have a method to execute".bgBlack.red);
-                        return context$2$0.abrupt("return");
-
-                    case 18:
-                        bundle = this._bundles[bundleId];
-
-                        if (!(typeof bundle[commandMethod] !== "function")) {
-                            context$2$0.next = 22;
-                            break;
-                        }
-
-                        console.error("The command ".bgBlack.red + commandName.bgBlack.green + " has an invalid method ".bgBlack.red);
-                        return context$2$0.abrupt("return");
-
-                    case 22:
-                        if (!("GeneratorFunction" !== bundle[commandMethod].constructor.name)) {
-                            context$2$0.next = 25;
-                            break;
-                        }
-
-                        console.error("The command ".bgBlack.red + commandName.bgBlack.green + " must implement a generator method".bgBlack.red);
-                        return context$2$0.abrupt("return");
-
-                    case 25:
-                        context$2$0.next = 27;
-                        return bundle[commandMethod].apply(bundle, parameters);
-
-                    case 27:
-                    case "end":
-                        return context$2$0.stop();
-                }
-            }, executeCommand, this);
-        })
+            // Execute the command
+            var commandMethod = command.method;
+            if (!commandMethod) {
+                console.error("The command does not have a method to execute".bgBlack.red);
+                return;
+            }
+            var bundle = this._bundles[bundleId];
+            if (typeof bundle[commandMethod] !== "function") {
+                console.error("The command ".bgBlack.red + commandName.bgBlack.green + " has an invalid method ".bgBlack.red);
+                return;
+            }
+            if ("GeneratorFunction" !== bundle[commandMethod].constructor.name) {
+                console.error("The command ".bgBlack.red + commandName.bgBlack.green + " must implement a generator method".bgBlack.red);
+                return;
+            }
+            yield bundle[commandMethod].apply(bundle, parameters);
+        }
     }, {
         key: "displayGeneralHelp",
 
         /**
          * Display the available commands from bundles
          */
-        value: _regeneratorRuntime.mark(function displayGeneralHelp() {
-            var sortedBundleIds, bundleCount, bundleIndex, bundleId, bundleCommands, commandName, command;
-            return _regeneratorRuntime.wrap(function displayGeneralHelp$(context$2$0) {
-                while (1) switch (context$2$0.prev = context$2$0.next) {
-                    case 0:
-                        // Display the header
-                        console.info("SolfegeJS CLI".bgBlack.cyan);
-                        console.info("-------------\n".bgBlack.cyan);
-                        console.info("Usage: " + "bundleId".bgBlack.yellow + ":" + "commandName".bgBlack.green + " [argument1] [argument2] ...\n");
+        value: function* displayGeneralHelp() {
+            // Display the header
+            console.info("SolfegeJS CLI".bgBlack.cyan);
+            console.info("-------------\n".bgBlack.cyan);
+            console.info("Usage: " + "bundleId".bgBlack.yellow + ":" + "commandName".bgBlack.green + " [argument1] [argument2] ...\n");
 
-                        sortedBundleIds = _Object$keys(this._commands).sort();
-                        bundleCount = sortedBundleIds.length;
+            // Display each bundle CLI
+            var sortedBundleIds = Object.keys(this._commands).sort();
+            var bundleCount = sortedBundleIds.length;
+            var bundleIndex;
+            for (bundleIndex = 0; bundleIndex < bundleCount; ++bundleIndex) {
+                var bundleId = sortedBundleIds[bundleIndex];
+                var bundleCommands = this._commands[bundleId];
+                var commandName;
 
-                        for (bundleIndex = 0; bundleIndex < bundleCount; ++bundleIndex) {
-                            bundleId = sortedBundleIds[bundleIndex];
-                            bundleCommands = this._commands[bundleId];
+                // Display the bundle id
+                console.info(bundleId.yellow);
+                for (commandName in bundleCommands) {
+                    var command = bundleCommands[commandName];
 
-                            // Display the bundle id
-                            console.info(bundleId.yellow);
-                            for (commandName in bundleCommands) {
-                                command = bundleCommands[commandName];
+                    // Display the command name
+                    process.stdout.write("  - " + commandName.bgBlack.green);
 
-                                // Display the command name
-                                process.stdout.write("  - " + commandName.bgBlack.green);
+                    // Display the description
+                    if (command.description) {
+                        process.stdout.write(" : " + command.description);
+                    }
 
-                                // Display the description
-                                if (command.description) {
-                                    process.stdout.write(" : " + command.description);
-                                }
-
-                                process.stdout.write("\n");
-                            }
-
-                            process.stdout.write("\n");
-                        }
-
-                    case 6:
-                    case "end":
-                        return context$2$0.stop();
+                    process.stdout.write("\n");
                 }
-            }, displayGeneralHelp, this);
-        })
+
+                process.stdout.write("\n");
+            }
+        }
     }, {
         key: "displayCommandHelp",
 
@@ -375,62 +269,43 @@ var Console = (function () {
          *
          * @param   {String}    commandId   The command id
          */
-        value: _regeneratorRuntime.mark(function displayCommandHelp(commandId) {
-            var commandIdInfo, bundleId, commandName, information;
-            return _regeneratorRuntime.wrap(function displayCommandHelp$(context$2$0) {
-                while (1) switch (context$2$0.prev = context$2$0.next) {
-                    case 0:
-                        commandIdInfo = commandId.split(":");
+        value: function* displayCommandHelp(commandId) {
+            // Get the bundle id and the command name
+            var commandIdInfo = commandId.split(":");
+            if (commandIdInfo.length !== 2) {
+                console.info("You must specify the bundle id and the command name".bgBlack.red);
+                return;
+            }
+            var bundleId = commandIdInfo[0];
+            var commandName = commandIdInfo[1];
 
-                        if (!(commandIdInfo.length !== 2)) {
-                            context$2$0.next = 4;
-                            break;
-                        }
+            // Check if the bundle and the command exists
+            if (!this._commands.hasOwnProperty(bundleId) || !this._commands[bundleId].hasOwnProperty(commandName)) {
+                console.info("Command not found".bgBlack.red);
+                return;
+            }
 
-                        console.info("You must specify the bundle id and the command name".bgBlack.red);
-                        return context$2$0.abrupt("return");
+            // Display the header
+            console.info("SolfegeJS CLI".bgBlack.cyan);
+            console.info("-------------\n".bgBlack.cyan);
+            console.info("Usage: " + bundleId.bgBlack.yellow + ":" + commandName.bgBlack.green + " [argument1] [argument2] ...\n");
 
-                    case 4:
-                        bundleId = commandIdInfo[0];
-                        commandName = commandIdInfo[1];
-
-                        if (!(!this._commands.hasOwnProperty(bundleId) || !this._commands[bundleId].hasOwnProperty(commandName))) {
-                            context$2$0.next = 9;
-                            break;
-                        }
-
-                        console.info("Command not found".bgBlack.red);
-                        return context$2$0.abrupt("return");
-
-                    case 9:
-
-                        // Display the header
-                        console.info("SolfegeJS CLI".bgBlack.cyan);
-                        console.info("-------------\n".bgBlack.cyan);
-                        console.info("Usage: " + bundleId.bgBlack.yellow + ":" + commandName.bgBlack.green + " [argument1] [argument2] ...\n");
-
-                        information = this._commands[bundleId][commandName];
-
-                        if (information.description) {
-                            console.info(information.description);
-                        }
-                        if (information.help) {
-                            console.info();
-                            if (Array.isArray(information.help)) {
-                                information.help.forEach(function (line) {
-                                    console.info(line);
-                                });
-                            } else {
-                                console.info(information.help);
-                            }
-                        }
-
-                    case 15:
-                    case "end":
-                        return context$2$0.stop();
+            // Display the command informations
+            var information = this._commands[bundleId][commandName];
+            if (information.description) {
+                console.info(information.description);
+            }
+            if (information.help) {
+                console.info();
+                if (Array.isArray(information.help)) {
+                    information.help.forEach(function (line) {
+                        console.info(line);
+                    });
+                } else {
+                    console.info(information.help);
                 }
-            }, displayCommandHelp, this);
-        })
+            }
+        }
     }, {
         key: "quietModeOn",
 
@@ -506,26 +381,3 @@ var Console = (function () {
 
 exports["default"] = Console;
 module.exports = exports["default"];
-// Set listeners
-// Get the available commands of each bundle
-
-// Get the configuration of the bundle
-// Help option
-
-// Execute the provided command name
-
-// Display the available commands from bundles
-
-// Get the bundle id and the command name
-
-// Get the commands of the bundle
-
-// Get the command
-
-// Execute the command
-// Display each bundle CLI
-
-// Get the bundle id and the command name
-
-// Check if the bundle and the command exists
-// Display the command informations

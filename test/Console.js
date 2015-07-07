@@ -1,5 +1,4 @@
 var solfege = require('solfegejs');
-var co = require('co');
 var expect = require('chai').expect;
 var should = require('chai').should();
 var colors = require('colors');
@@ -107,7 +106,57 @@ describe('Console', function()
                 done();
             }, 20);
         });
+
+        // A command without the command name
+        it('should not run a command without the command name', function(done)
+        {
+            var application = createApplication();
+            quietModeOn();
+            process.argv = ['', '', 'fake-a'];
+            application.start();
+            setTimeout(function() {
+                quietModeOff();
+                expect(output).to.equal('You must specify the bundle id and the command name'.bgBlack.red+'\n');
+                done();
+            }, 20);
+        });
+
+        // A command with a wrong bundle id
+        it('should not run a command with a wrong bundle id', function(done)
+        {
+            var application = createApplication();
+            quietModeOn();
+            process.argv = ['', '', 'unknown:tic'];
+            application.start();
+            setTimeout(function() {
+                quietModeOff();
+                expect(output).to.equal('The bundle '.bgBlack.red +
+                                        'unknown'.bgBlack.yellow +
+                                        ' is not available'.bgBlack.red +
+                                        '\n');
+                done();
+            }, 20);
+        });
+
+        // A command with a wrong command name
+        it('should not run a command with a wrong command name', function(done)
+        {
+            var application = createApplication();
+            quietModeOn();
+            process.argv = ['', '', 'fake-a:tiiiic'];
+            application.start();
+            setTimeout(function() {
+                quietModeOff();
+                expect(output).to.equal('The bundle '.bgBlack.red +
+                                        'fake-a'.bgBlack.yellow +
+                                        ' does not have the command '.bgBlack.red +
+                                        'tiiiic'.green +
+                                        '\n');
+                done();
+            }, 20);
+        });
     });
+
 
     /**
      * Test the --quiet option

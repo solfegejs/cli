@@ -3,11 +3,11 @@
  */
 "use strict";
 
-var _interopRequireDefault = require("babel-runtime/helpers/interop-require-default")["default"];
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var _solfegejs = require("solfegejs");
 
