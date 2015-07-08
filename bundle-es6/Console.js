@@ -85,6 +85,18 @@ export default class Console
     }
 
     /**
+     * Override the configuration of the bundles
+     *
+     * @public
+     * @param   {Object}    configuration   The configuration object
+     */
+    *overrideConfiguration(configuration)
+    {
+        this._configuration = configuration;
+    }
+
+
+    /**
      * Write in the standard output
      *
      * @public

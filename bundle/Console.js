@@ -64,6 +64,18 @@ var Console = (function () {
             this._application.on(_solfegejs2["default"].kernel.Application.EVENT_START, bindGenerator(this, this.onApplicationStart));
         }
     }, {
+        key: "overrideConfiguration",
+
+        /**
+         * Override the configuration of the bundles
+         *
+         * @public
+         * @param   {Object}    configuration   The configuration object
+         */
+        value: function* overrideConfiguration(configuration) {
+            this._configuration = configuration;
+        }
+    }, {
         key: "output",
 
         /**
