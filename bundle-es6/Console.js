@@ -2,6 +2,8 @@ import solfege from "solfegejs";
 import colors from "colors";
 import minimist from "minimist";
 
+let Application = solfege.kernel.Application;
+
 /**
  * The command line interface of SolfegeJS
  *
@@ -18,10 +20,10 @@ export default class Console
         this._configuration = require(__dirname + "/../config/default");
 
         // Initialize the bundle list
-        this._bundles = {};
+        this._bundles = new Map();
 
         // Initialize the command list
-        this._commands = {};
+        this._commands = new Map();
     }
 
     /**
@@ -74,12 +76,12 @@ export default class Console
      * @public
      * @param   {solfege.kernel.Application}    application     Application instance
      */
-    *setApplication(application)
+    *setApplication(application:Application)
     {
         this._application = application;
 
         // Set listeners
-        var bindGenerator = solfege.util.Function.bindGenerator;
+        let bindGenerator = solfege.util.Function.bindGenerator;
         this._application.on(solfege.kernel.Application.EVENT_BUNDLES_INITIALIZED, bindGenerator(this, this.onBundlesInitialized));
         this._application.on(solfege.kernel.Application.EVENT_START, bindGenerator(this, this.onApplicationStart));
     }
@@ -105,12 +107,12 @@ export default class Console
      * @param   {string}    foregroundColor     The foreground color
      * @param   {string}    backgroundColor     The background color
      */
-    output(message, level, foregroundColor, backgroundColor)
+    output(message:string, level:number, foregroundColor:string, backgroundColor:string)
     {
-        var options = minimist(process.argv.slice(2));
+        let options = minimist(process.argv.slice(2));
 
         // Get levels
-        var maxLevel = 0;
+        let maxLevel = 0;
         if (options.v) {
             maxLevel = 1;
         }
@@ -146,18 +148,16 @@ export default class Console
         this._bundles = this.application.getBundles();
 
         // Get the available commands of each bundle
-        for (var bundleId in this._bundles) {
-            var bundle = this._bundles[bundleId];
-
+        for (let [bundleId, bundle] of this._bundles) {
             // Get the configuration of the bundle
             if (typeof bundle.getConfiguration !== 'function') {
                 continue;
             }
-            var bundleConfiguration = bundle.getConfiguration();
+            let bundleConfiguration = bundle.getConfiguration();
 
             // Get the command list
             if (bundleConfiguration.hasOwnProperty('cli')) {
-                this._commands[bundleId] = bundleConfiguration.cli;
+                this._commands.set(bundleId, bundleConfiguration.cli);
             }
         }
     }
@@ -167,7 +167,7 @@ export default class Console
      */
     *onApplicationStart()
     {
-        var parameters, options,
+        let parameters, options,
             bundle, bundleId, bundleCommands,
             commandId;
 
@@ -213,25 +213,25 @@ export default class Console
      * @param   {Array}     parameters  The command parameters
      * @param   {Object}    options     The options
      */
-    *executeCommand(commandId, parameters, options)
+    *executeCommand(commandId:string, parameters?, options?)
     {
         // Get the bundle id and the command name
-        var commandIdInfo = commandId.split(':');
+        let commandIdInfo = commandId.split(':');
         if (commandIdInfo.length !== 2) {
             console.error('You must specify the bundle id and the command name'.bgBlack.red);
             return;
         }
-        var bundleId = commandIdInfo[0];
-        var commandName = commandIdInfo[1];
+        let bundleId = commandIdInfo[0];
+        let commandName = commandIdInfo[1];
 
         // Get the commands of the bundle
-        if (!this._commands.hasOwnProperty(bundleId)) {
+        if (!this._commands.has(bundleId)) {
             console.error('The bundle '.bgBlack.red +
                           bundleId.bgBlack.yellow +
                           ' is not available'.bgBlack.red);
             return;
         }
-        var bundleCommands = this._commands[bundleId];
+        let bundleCommands = this._commands.get(bundleId);
 
         // Get the command
         if (!bundleCommands.hasOwnProperty(commandName)) {
@@ -241,15 +241,15 @@ export default class Console
                           commandName.green);
             return;
         }
-        var command = bundleCommands[commandName];
+        let command = bundleCommands[commandName];
 
         // Execute the command
-        var commandMethod = command.method;
+        let commandMethod = command.method;
         if (!commandMethod) {
             console.error('The command does not have a method to execute'.bgBlack.red);
             return;
         }
-        var bundle = this._bundles[bundleId];
+        let bundle = this._bundles.get(bundleId);
         if (typeof bundle[commandMethod] !== 'function') {
             console.error('The command '.bgBlack.red +
                           commandName.bgBlack.green +
@@ -285,18 +285,21 @@ export default class Console
 
 
         // Display each bundle CLI
-        var sortedBundleIds = Object.keys(this._commands).sort();
-        var bundleCount = sortedBundleIds.length;
-        var bundleIndex;
-        for (bundleIndex = 0; bundleIndex < bundleCount; ++bundleIndex) {
-            var bundleId = sortedBundleIds[bundleIndex];
-            var bundleCommands = this._commands[bundleId];
-            var commandName;
+        let bundleIds = this._commands.keys();
+        let sortedBundleIds = [];
+        for (let bundleId of bundleIds) {
+            sortedBundleIds.push(bundleId);
+        }
+        sortedBundleIds = sortedBundleIds.sort();
+        let bundleCount = sortedBundleIds.length;
+        for (let bundleIndex = 0; bundleIndex < bundleCount; ++bundleIndex) {
+            let bundleId = sortedBundleIds[bundleIndex];
+            let bundleCommands = this._commands.get(bundleId);
 
             // Display the bundle id
             console.info(bundleId.yellow);
-            for (commandName in bundleCommands) {
-                var command = bundleCommands[commandName];
+            for (let commandName in bundleCommands) {
+                let command = bundleCommands[commandName];
 
                 // Display the command name
                 process.stdout.write('  - ' + commandName.bgBlack.green);
@@ -316,21 +319,21 @@ export default class Console
     /**
      * Display the available options for the specified command
      *
-     * @param   {String}    commandId   The command id
+     * @param   {string}    commandId   The command id
      */
-    *displayCommandHelp(commandId)
+    *displayCommandHelp(commandId:string)
     {
         // Get the bundle id and the command name
-        var commandIdInfo = commandId.split(':');
+        let commandIdInfo = commandId.split(':');
         if (commandIdInfo.length !== 2) {
             console.info('You must specify the bundle id and the command name'.bgBlack.red);
             return;
         }
-        var bundleId = commandIdInfo[0];
-        var commandName = commandIdInfo[1];
+        let bundleId = commandIdInfo[0];
+        let commandName = commandIdInfo[1];
 
         // Check if the bundle and the command exists
-        if (!this._commands.hasOwnProperty(bundleId) || !this._commands[bundleId].hasOwnProperty(commandName)) {
+        if (!this._commands.has(bundleId) || !this._commands.get(bundleId).hasOwnProperty(commandName)) {
             console.info('Command not found'.bgBlack.red);
             return;
         }
@@ -346,7 +349,7 @@ export default class Console
 
 
         // Display the command informations
-        var information = this._commands[bundleId][commandName];
+        let information = this._commands.get(bundleId)[commandName];
         if (information.description) {
             console.info(information.description);
         }
