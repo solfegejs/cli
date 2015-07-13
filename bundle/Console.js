@@ -68,8 +68,6 @@ var Console = (function () {
          * @param   {solfege.kernel.Application}    application     Application instance
          */
         value: function* setApplication(application) {
-            if (!(application instanceof Application)) throw new TypeError("Value of argument 'application' violates contract.");
-
             this._application = application;
 
             // Set listeners

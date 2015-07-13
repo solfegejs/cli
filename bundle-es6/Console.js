@@ -76,7 +76,7 @@ export default class Console
      * @public
      * @param   {solfege.kernel.Application}    application     Application instance
      */
-    *setApplication(application:Application)
+    *setApplication(application)
     {
         this._application = application;
 
