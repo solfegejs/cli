@@ -68,8 +68,12 @@ export default class Bundle
         let commandsRegistry = yield this.container.get("solfege_console_commands_registry");
         let commands = commandsRegistry.getCommands();
 
-        // Copy parameters
-        parameters = parameters.slice(0);
+        // Split parameters and options
+        let args = minimist(parameters);
+        parameters = args._;
+        let options = Object.assign({}, args);
+        delete options._;
+
 
         // Configure commands
         // and create a map
@@ -97,7 +101,7 @@ export default class Bundle
 
                 // Execute the command
                 let commandParameters = parameters.slice(0);
-                yield command.execute(commandParameters);
+                yield command.execute(commandParameters, options);
                 return;
             }
         }

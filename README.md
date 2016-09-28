@@ -7,18 +7,60 @@ Command Line Interface of SolfegeJS
 Installation
 ------------
 
-```bash
-npm install solfegejs-cli
-```
+The bundle is included by default in SolfegeJS. You don't need to install it.
 
-In the main file of the SolfegeJS application:
+See [SolfegeJS](https://github.com/neolao/solfege/)
+
+
+Available commands
+------------------
+
+In order to expore commands, you need to create a `console.js` file:
 
 ```javascript
-var solfege = require('solfegejs');
-var cli = require('solfegejs-cli');
+const solfege = require("solfegejs");
 
-var application = solfege.kernel.Application(__dirname);
-application.addBundle('console', cli.Console);
+// Initialize the application
+let application = solfege.factory();
 
-application.start();
+// Start the application
+// The first 2 parameters are removed (node and the script)
+application.start(process.argv.slice(2));
+```
+
+
+Expose a command
+----------------
+
+To expose a command, you have to create a service with a specific tag:
+
+```yaml
+services:
+    my_command:
+        class: "Command/MyCommand"
+        tags:
+            - { name: "solfege.console.command" }
+```
+
+And your class must implement 2 methods (`getName` and `execute`):
+
+```javascript
+export default class MyCommand
+{
+    getName()
+    {
+        return "my-command";
+    }
+
+    *execute(parameters, options)
+    {
+        console.log("My command executed");
+    }
+}
+```
+
+Now you can call your command like that:
+
+```bash
+node console.js my-command
 ```

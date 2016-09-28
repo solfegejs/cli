@@ -1,7 +1,7 @@
 {
     "name"          : "solfegejs-cli",
     "description"   : "Command Line Interface of SolfegeJS",
-    "version"       : "2.0.0",
+    "version"       : "2.0.1",
     "author"        : "neolao <contact@neolao.com>",
     "repository"    : "https://github.com/neolao/solfege-bundle-cli.git",
     "license"       : "MIT",
@@ -38,13 +38,11 @@
     },
     "scripts"       :
     {
-        "test"             : "mocha --harmony --compilers js:babel-core/register --recursive --reporter spec --bail",
+        "test"             : "node test.js",
         "coverage"         : "node --harmony ./node_modules/istanbul/lib/cli.js cover -- ./node_modules/mocha/bin/_mocha --harmony --recursive",
         "documentation"    : "jsdoc --recurse ./lib-es6 --destination ./documentation",
         "watch"            : "babel --watch --out-dir lib lib-es6 --copy-files",
-        "compile"          : "babel --out-dir lib lib-es6 --copy-files",
-        "example-compile"  : "babel --out-dir example/lib example/lib-es6 --copy-files",
-        "example-console"  : "node --harmony  example/lib/console.js"
+        "compile"          : "babel --out-dir lib lib-es6 --copy-files"
     },
     "babel": {
         "presets": ["stage-0"],
