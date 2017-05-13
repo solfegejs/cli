@@ -1,8 +1,10 @@
-import bindGenerator from "bind-generator";
-import {fn as isGenerator} from "is-generator";
-import colors from "colors";
-import minimist from "minimist";
-import CommandCompilerPass from "./DependencyInjection/Compiler/CommandCompilerPass";
+/* @flow */
+import bindGenerator from "bind-generator"
+import {fn as isGenerator} from "is-generator"
+import colors from "colors/safe"
+import minimist from "minimist"
+import CommandCompilerPass from "./DependencyInjection/Compiler/CommandCompilerPass"
+import type {CommandInterface} from "../interface"
 
 /**
  * Console bundle
@@ -10,13 +12,20 @@ import CommandCompilerPass from "./DependencyInjection/Compiler/CommandCompilerP
 export default class Bundle
 {
     /**
+     * Solfege Application
+     */
+    application:any;
+
+    /**
+     * Service container
+     */
+    container:any;
+
+    /**
      * Constructor
      */
-    constructor()
+    constructor():void
     {
-        // Initialize properties
-        this.application;
-        this.container;
     }
 
     /**
@@ -24,18 +33,17 @@ export default class Bundle
      *
      * @return  {String}        The bundle path
      */
-    getPath()
+    getPath():string
     {
         return __dirname;
     }
 
-
     /**
      * Initialize the bundle
      *
-     * @param   {solfegejs/kernel/Application}  application     Solfege application
+     * @param   {Application}   application     Solfege application
      */
-    *initialize(application)
+    *initialize(application:any):*
     {
         this.application = application;
 
@@ -48,7 +56,7 @@ export default class Bundle
      *
      * @param   {Container}     container       Service container
      */
-    *configureContainer(container)
+    *configureContainer(container:any):*
     {
         this.container = container;
 
@@ -59,10 +67,10 @@ export default class Bundle
     /**
      * The application is started
      *
-     * @param   {solfege/kernel/Application}    application     The application
-     * @param   {Array}                         parameters      The parameters
+     * @param   {Application}   application     The application
+     * @param   {Array}         parameters      The parameters
      */
-    *onStart(application, parameters)
+    *onStart(application:any, parameters:Array<string>):*
     {
         // Get commands
         let commandsRegistry = yield this.container.get("solfege_console_commands_registry");
@@ -101,7 +109,9 @@ export default class Bundle
 
                 // Execute the command
                 let commandParameters = parameters.slice(0);
-                yield command.execute(commandParameters, options);
+                if (command) {
+                    yield command.execute(commandParameters, options);
+                }
                 return;
             }
         }
@@ -109,8 +119,8 @@ export default class Bundle
 
         // Display the header
         let title = "SolfegeJS CLI";
-        console.info(title.bgBlack.cyan);
-        console.info("-".repeat(title.length).bgBlack.cyan+"\n");
+        console.info(colors.bgBlack.cyan(title));
+        console.info(colors.bgBlack.cyan("-".repeat(title.length))+"\n");
 
         // Display command list
         yield this.displayAvailableCommands(commands);
@@ -121,16 +131,18 @@ export default class Bundle
      *
      * @param   {Set}   commands    Commands
      */
-    *displayAvailableCommands(commands:Set)
+    *displayAvailableCommands(commands:Set<CommandInterface>):*
     {
-        for (let command of commands) {
+        for (let command:CommandInterface of commands) {
             let name = command.getName();
             let description = "";
+
+            // @todo Find a way to type the optional getDescription() method
             if (typeof command.getDescription === "function") {
                 description = command.getDescription();
             }
 
-            console.info(`${name.green}   ${description}`);
+            console.info(`${colors.green(name)}   ${description}`);
         }
     }
 }

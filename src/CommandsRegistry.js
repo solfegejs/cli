@@ -1,4 +1,5 @@
-import ContainerAwareCommand from "./Command/ContainerAwareCommand";
+/* @flow */
+import type {CommandInterface, ContainerInterface} from "../interface"
 
 /**
  * Commands registry
@@ -6,11 +7,21 @@ import ContainerAwareCommand from "./Command/ContainerAwareCommand";
 export default class CommandsRegistry
 {
     /**
+     * Service container
+     */
+    container:ContainerInterface;
+
+    /**
+     * Commands
+     */
+    commands:Set<CommandInterface>;
+
+    /**
      * Constructor
      *
      * @param   {Container}     container   The service container
      */
-    constructor(container)
+    constructor(container:ContainerInterface):void
     {
         this.container = container;
 
@@ -21,11 +32,12 @@ export default class CommandsRegistry
     /**
      * Add command
      *
-     * @param   {Object}    command     Command
+     * @param   {CommandInterface}    command     Command
      */
-    addCommand(command)
+    addCommand(command:CommandInterface):void
     {
-        if (command instanceof ContainerAwareCommand) {
+        // @todo How to check if the command is container aware?
+        if (typeof command.setContainer === "function") {
             command.setContainer(this.container);
         }
 
@@ -37,7 +49,7 @@ export default class CommandsRegistry
      *
      * @return  {Set}                   Commands
      */
-    getCommands()
+    getCommands():Set<CommandInterface>
     {
         return this.commands;
     }

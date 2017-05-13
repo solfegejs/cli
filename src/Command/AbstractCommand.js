@@ -1,15 +1,27 @@
+/* @flow */
+import type {CommandInterface} from "../../interface"
+
 /**
  * An abstract command
  */
-export default class AbstractCommand
+export default class AbstractCommand implements CommandInterface
 {
+    /**
+     * Command name
+     */
+    name:string;
+
+    /**
+     * Command description
+     */
+    description:string;
+
     /**
      * Constructor
      */
     constructor()
     {
         // Initialize properties
-        this.name = null;
         this.description = "";
     }
 
@@ -18,7 +30,7 @@ export default class AbstractCommand
      *
      * @return  {string}    Command name
      */
-    getName()
+    getName():string
     {
         return this.name;
     }
@@ -28,7 +40,7 @@ export default class AbstractCommand
      *
      * @param   {string}    name    Command name
      */
-    setName(name:string)
+    setName(name:string):void
     {
         this.name = name;
     }
@@ -38,7 +50,7 @@ export default class AbstractCommand
      *
      * @return  {string}    Command description
      */
-    getDescription()
+    getDescription():string
     {
         return this.description;
     }
@@ -48,7 +60,7 @@ export default class AbstractCommand
      *
      * @param   {string}    description     Command description
      */
-    setDescription(description:string)
+    setDescription(description:string):void
     {
         this.description = description;
     }
@@ -56,14 +68,14 @@ export default class AbstractCommand
     /**
      * Condigure command
      */
-    *configure()
+    *configure():*
     {
     }
 
     /**
      * Execute the command
      */
-    *execute()
+    *execute():*
     {
     }
 }

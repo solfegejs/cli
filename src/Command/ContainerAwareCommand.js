@@ -1,3 +1,4 @@
+/* @flow */
 import AbstractCommand from "./AbstractCommand";
 
 /**
@@ -6,11 +7,16 @@ import AbstractCommand from "./AbstractCommand";
 export default class ContainerAwareCommand extends AbstractCommand
 {
     /**
+     * Service container
+     */
+    container:any;
+
+    /**
      * Set the service container
      *
      * @param   {Container}     container   Service container
      */
-    setContainer(container)
+    setContainer(container:any):void
     {
         this.container = container;
     }
@@ -20,7 +26,7 @@ export default class ContainerAwareCommand extends AbstractCommand
      *
      * @return  {Container}                 Service container
      */
-    getContainer()
+    getContainer():any
     {
         return this.container;
     }
