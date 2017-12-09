@@ -9,7 +9,7 @@ export default class CommandCompilerPass
      *
      * @param   {Container}     container   Service container
      */
-    *process(container)
+    async process(container)
     {
         let definition = container.getDefinition("solfege_console_commands_registry");
 

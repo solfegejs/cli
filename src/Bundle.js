@@ -1,33 +1,18 @@
 /* @flow */
-import bindGenerator from "bind-generator"
-import {fn as isGenerator} from "is-generator"
 import colors from "colors/safe"
 import minimist from "minimist"
 import CommandCompilerPass from "./DependencyInjection/Compiler/CommandCompilerPass"
 import type {CommandInterface} from "../interface"
+import type {BundleInterface, InitializableBundleInterface} from "solfegejs-application/src/BundleInterface"
+import type Application from "solfegejs-application"
+import type Container from "solfegejs-dependency-injection/src/ServiceContainer/Container"
+import type {ContainerConfiguratorBundleInterface} from "solfegejs-dependency-injection/interface"
 
 /**
  * Console bundle
  */
-export default class Bundle
+export default class Bundle implements BundleInterface, InitializableBundleInterface, ContainerConfiguratorBundleInterface
 {
-    /**
-     * Solfege Application
-     */
-    application:any;
-
-    /**
-     * Service container
-     */
-    container:any;
-
-    /**
-     * Constructor
-     */
-    constructor():void
-    {
-    }
-
     /**
      * Get bundle path
      *
@@ -43,12 +28,10 @@ export default class Bundle
      *
      * @param   {Application}   application     Solfege application
      */
-    *initialize(application:any):*
+    initialize(application:Application)
     {
-        this.application = application;
-
         // Listen the application start
-        this.application.on("start", bindGenerator(this, this.onStart));
+        application.on("start", this.onStart.bind(this));
     }
 
     /**
@@ -56,12 +39,10 @@ export default class Bundle
      *
      * @param   {Container}     container       Service container
      */
-    *configureContainer(container:any):*
+    configureContainer(container:any):void
     {
-        this.container = container;
-
         // Add the compiler pass that handle command tags
-        this.container.addCompilerPass(new CommandCompilerPass());
+        container.addCompilerPass(new CommandCompilerPass());
     }
 
     /**
@@ -70,11 +51,21 @@ export default class Bundle
      * @param   {Application}   application     The application
      * @param   {Array}         parameters      The parameters
      */
-    *onStart(application:any, parameters:Array<string>):*
+    async onStart(application:Application, parameters:Array<string>)
     {
+        const container:Container = application.getParameter("serviceContainer");
+        if (!container) {
+            throw new Error("Service container not available");
+        }
+
         // Get commands
-        let commandsRegistry = yield this.container.get("solfege_console_commands_registry");
-        let commands = commandsRegistry.getCommands();
+        let commands = [];
+        try {
+            let commandsRegistry = await container.get("solfege_console_commands_registry");
+            commands = commandsRegistry.getCommands();
+        } catch (error) {
+            throw new Error(`[CLI] Unable to get commands: ${error.message}`);
+        }
 
         // Split parameters and options
         let args = minimist(parameters);
@@ -92,8 +83,8 @@ export default class Bundle
                 throw new Error(`Command must implement "getName" method.`);
             }
 
-            if (isGenerator(command.configure)) {
-                yield command.configure();
+            if (typeof command.configure === "function") {
+                await command.configure();
             }
 
             let name = command.getName();
@@ -110,7 +101,7 @@ export default class Bundle
                 // Execute the command
                 let commandParameters = parameters.slice(0);
                 if (command) {
-                    yield command.execute(commandParameters, options);
+                    await command.execute(commandParameters, options);
                 }
                 return;
             }
@@ -123,7 +114,7 @@ export default class Bundle
         console.info(colors.bgBlack.cyan("-".repeat(title.length))+"\n");
 
         // Display command list
-        yield this.displayAvailableCommands(commands);
+        await this.displayAvailableCommands(commands);
     }
 
     /**
@@ -131,7 +122,7 @@ export default class Bundle
      *
      * @param   {Set}   commands    Commands
      */
-    *displayAvailableCommands(commands:Set<CommandInterface>):*
+    async displayAvailableCommands(commands:Set<CommandInterface>)
     {
         for (let command:CommandInterface of commands) {
             let name = command.getName();

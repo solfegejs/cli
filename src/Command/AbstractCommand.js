@@ -68,14 +68,14 @@ export default class AbstractCommand implements CommandInterface
     /**
      * Condigure command
      */
-    *configure():*
+    async configure()
     {
     }
 
     /**
      * Execute the command
      */
-    *execute():*
+    async execute()
     {
     }
 }

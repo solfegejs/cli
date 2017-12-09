@@ -1,37 +1,35 @@
 {
     "name": "solfegejs-cli",
     "description": "Command Line Interface of SolfegeJS",
-    "version": "2.0.3",
+    "version": "4.0.0",
     "author": "neolao <contact@neolao.com>",
     "repository": "https://github.com/neolao/solfege-bundle-cli.git",
     "license": "MIT",
     "files": [
         "lib",
+        "src",
         "interface.js"
     ],
     "main": "lib/Bundle.js",
     "engines": {
-        "node": ">= 5"
+        "node": ">= 9"
     },
     "dependencies": {
-        "bind-generator": "^1.0.0",
         "colors": "^1.1",
-        "is-generator": "^1.0.3",
         "minimist": "^1.2"
-    },
-    "peerDependencies": {
-        "solfegejs": "2.x"
     },
     "devDependencies": {
         "babel-cli": "^6.7",
+        "babel-core": "^6.26",
         "babel-preset-solfege": "^1.0.1",
         "chai": "^3.5",
         "co-mocha": "^1.2.0",
-        "flow-bin": "^0.46.0",
-        "gnomon": "^1.5.0",
+        "flow-bin": "^0.60.1",
         "jsdoc": "^3.4",
         "mocha": "^3.0",
         "nyc": "^10.3.2",
+        "solfegejs-application": "^3.0.1",
+        "solfegejs-dependency-injection": "^2.1.6",
         "watch": "^1.0.2"
     },
     "scripts": {
@@ -44,7 +42,7 @@
         "flow-restart": "flow stop; flow start",
         "prebuild": "flow",
         "build": "babel --out-dir lib src --copy-files",
-        "watch": "watch 'echo \"----------\"; npm run build --silent | gnomon' ./src",
+        "watch": "watch 'echo \"----------\"; npm run build --silent' ./src",
         "example-build": "flow; babel --out-dir example/lib example/src --copy-files",
         "example-console": "node --harmony  example/lib/console.js"
     },

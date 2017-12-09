@@ -1,13 +1,12 @@
-import solfege from "solfegejs"
+import Application from "solfegejs-application"
+import DIBundle from "solfegejs-dependency-injection"
 import CliBundle from "../../lib/Bundle"
 //import MyBundle from "./Bundle";
 
 // Create application instance
-let application = new solfege.Application;
+let application = new Application;
+application.addBundle(new DIBundle);
 application.addBundle(new CliBundle);
-
-// Load configuration file
-//application.loadConfigurationFile(`${__dirname}/config/production.yml`, "yaml");
 
 // Start the application
 let parameters = process.argv.slice(2);
