@@ -13,13 +13,6 @@ export interface CommandInterface
     getName():string;
 
     /**
-     * Set command name
-     *
-     * @param   {string}    name    Command name
-     */
-    setName(name:string):void;
-
-    /**
      * Condigure command
      */
     configure():*;
