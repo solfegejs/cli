@@ -15,18 +15,13 @@ export interface CommandInterface
     /**
      * Condigure command
      */
-    configure():*;
+    configure():void | Promise<void>;
 
     /**
      * Execute the command
+     *
+     * @param   {Array}     parameters  Command parameters
      */
-    execute():*;
+    execute(parameters:Array<string>):void | Promise<void>;
 }
 
-export interface DescribedCommandInterface
-{
-}
-
-export interface ContainerInterface
-{
-}

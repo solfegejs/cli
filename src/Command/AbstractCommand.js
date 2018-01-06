@@ -68,14 +68,16 @@ export default class AbstractCommand implements CommandInterface
     /**
      * Condigure command
      */
-    async configure()
+    async configure():void | Promise<void>
     {
     }
 
     /**
      * Execute the command
+     *
+     * @param   {Array}     parameters  Command parameters
      */
-    async execute()
+    async execute(parameters:Array<string>):void | Promise<void>
     {
     }
 }

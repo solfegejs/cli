@@ -1,5 +1,5 @@
 /* @flow */
-import type {CommandInterface, ContainerInterface} from "../interface"
+import type {CommandInterface} from "../interface"
 
 /**
  * Commands registry
@@ -9,7 +9,7 @@ export default class CommandsRegistry
     /**
      * Service container
      */
-    container:ContainerInterface;
+    container:any;
 
     /**
      * Commands
@@ -21,7 +21,7 @@ export default class CommandsRegistry
      *
      * @param   {Container}     container   The service container
      */
-    constructor(container:ContainerInterface):void
+    constructor(container:any):void
     {
         this.container = container;
 
