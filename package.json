@@ -1,55 +1,62 @@
 {
-    "name": "solfegejs-cli",
-    "description": "Command Line Interface of SolfegeJS",
-    "version": "4.0.2",
-    "author": "neolao <contact@neolao.com>",
-    "repository": "https://github.com/neolao/solfege-bundle-cli.git",
-    "license": "MIT",
-    "files": [
-        "lib",
-        "src",
-        "interface.js"
+  "name": "@solfege/cli",
+  "description": "Command Line Interface of SolfegeJS",
+  "version": "5.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "neolao <contact@neolao.com>",
+  "repository": "https://github.com/solfegejs/cli.git",
+  "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/Bundle.js",
+  "engines": {
+    "node": ">= 10"
+  },
+  "dependencies": {
+    "colors": "^1.1",
+    "minimist": "^1.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-formatter-pretty": "^1.3.0",
+    "eslint-plugin-node": "^7.0.1",
+    "jest": "^23.4.2",
+    "watch": "^1.0.2"
+  },
+  "scripts": {
+    "prepare": "npm run lint",
+    "lint": "eslint --ignore-pattern \"**/*.test.js\" --format=node_modules/eslint-formatter-pretty lib",
+    "test": "jest",
+    "watch": "watch 'echo \"\\033[41;37m      LINT      \\033[0m\"; npm run --silent lint' ./lib",
+    "prepublish": "npm run lint && npm test"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2019
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:node/recommended"
     ],
-    "main": "lib/Bundle.js",
-    "engines": {
-        "node": ">= 9"
-    },
-    "dependencies": {
-        "colors": "^1.1",
-        "minimist": "^1.2"
-    },
-    "devDependencies": {
-        "babel-cli": "^6.7",
-        "babel-core": "^6.26",
-        "babel-preset-solfege": "^1.0.1",
-        "chai": "^3.5",
-        "co-mocha": "^1.2.0",
-        "flow-bin": "^0.60.1",
-        "jsdoc": "^3.4",
-        "mocha": "^3.0",
-        "nyc": "^10.3.2",
-        "solfegejs-application": "^3.0.1",
-        "solfegejs-dependency-injection": "^2.1.6",
-        "watch": "^1.0.2"
-    },
-    "scripts": {
-        "prepare": "npm run build; npm test",
-        "test": "mocha --harmony --compilers js:babel-core/register --require co-mocha --recursive --reporter spec --bail",
-        "coverage": "nyc npm test",
-        "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
-        "flow-stop": "flow stop",
-        "flow-start": "flow start",
-        "flow-restart": "flow stop; flow start",
-        "prebuild": "flow",
-        "build": "babel --out-dir lib src --copy-files",
-        "watch": "watch 'echo \"----------\"; npm run build --silent' ./src",
-        "example-build": "flow; babel --out-dir example/lib example/src --copy-files",
-        "example-console": "node --harmony  example/lib/console.js"
-    },
-    "babel": {
-        "presets": [
-            "solfege"
-        ],
-        "comments": false
+    "rules": {
+      "indent": [
+        "error",
+        2
+      ]
     }
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "lib/**/*.js"
+    ],
+    "verbose": true,
+    "testURL": "http://localhost/"
+  }
 }
