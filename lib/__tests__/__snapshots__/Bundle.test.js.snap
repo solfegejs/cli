@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bundle should display command list by default 1`] = `
+"[40m[36mSolfegeJS CLI[39m[49m
+[40m[36m-------------[39m[49m
+
+[32mCommand 1[39m   
+[32mCommand 2[39m   
+"
+`;
