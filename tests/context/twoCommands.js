@@ -1,26 +1,13 @@
 const Application = require("@solfege/application");
 const CommandsRegistry = require("../../lib/CommandsRegistry");
 const Bundle = require("../../lib/Bundle");
+const Command1 = require("./commands/Command1");
+const Command2 = require("./commands/Command2");
 
 const application = new Application();
 const registry = new CommandsRegistry();
-registry.addCommand({
-  getName: () => {
-    return "command1";
-  },
-  execute: () => {
-    process.stdout.write("command1 output");
-  },
-  displayHelp: () => {
-    process.stdout.write("command1 help");
-  },
-});
-registry.addCommand({
-  getName: () => {
-    return "command2";
-  },
-  execute: () => {},
-});
+registry.addCommand(new Command1());
+registry.addCommand(new Command2());
 
 application.setParameter("serviceContainer", {
   get: name => {
