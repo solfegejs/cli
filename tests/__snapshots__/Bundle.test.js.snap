@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bundle should display command help 1`] = `
+"Usage: command1 [options]
+
+Options:
+  -h, --help  output usage information
+command1 help"
+`;
+
+exports[`Bundle should display help 1`] = `
+"Usage: twoCommands [options] [command]
+
+Options:
+  -h, --help  output usage information
+
+Commands:
+  command1
+  command2
+"
+`;
+
+exports[`Bundle should display help by default 1`] = `
+"Usage: twoCommands [options] [command]
+
+Options:
+  -h, --help  output usage information
+
+Commands:
+  command1
+  command2
+"
+`;

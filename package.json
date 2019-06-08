@@ -32,8 +32,9 @@
   },
   "scripts": {
     "lint": "eslint --format=node_modules/eslint-formatter-pretty lib",
+    "lint:watch": "watch 'clear; echo \"\\033[41;37m      LINT      \\033[0m\"; npm run --silent lint' ./lib",
     "test": "jest",
-    "watch": "watch 'echo \"\\033[41;37m      LINT      \\033[0m\"; npm run --silent lint' ./lib",
+    "test:watch": "jest --watch --coverage false",
     "prepublishOnly": "npm run lint && npm test"
   },
   "eslintConfig": {
