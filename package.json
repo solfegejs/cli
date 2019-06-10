@@ -1,7 +1,7 @@
 {
   "name": "@solfege/cli",
   "description": "Command Line Interface of SolfegeJS",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "publishConfig": {
     "access": "public"
   },
