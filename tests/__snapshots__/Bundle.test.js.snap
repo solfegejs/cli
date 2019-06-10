@@ -8,6 +8,26 @@ Options:
 command1 help"
 `;
 
+exports[`Bundle should display descriptions 1`] = `
+"Usage: command3 [options] <arg1> <arg2> [arg3] [arg4]
+
+command3 description
+
+Arguments:
+
+  arg1            First argument
+  arg2            
+  arg3            Third argument
+  arg4            
+
+Options:
+  --opt1 <value>  Option 1 (default: \\"foo\\")
+  --opt2          Option 2
+  --opt3          
+  -h, --help      output usage information
+command3 help"
+`;
+
 exports[`Bundle should display help 1`] = `
 "Usage: twoCommands [options] [command]
 
