@@ -3,6 +3,7 @@ const { execFile } = require('child_process');
 describe("Bundle", () => {
   const twoCommands = `${__dirname}/context/twoCommands.js`;
   const fullCommands = `${__dirname}/context/fullCommands.js`;
+  const errorCommand = `${__dirname}/context/errorCommand.js`;
 
   it("should display help by default", done => {
     execFile("node", [twoCommands], (error, stdout) => {
@@ -35,6 +36,13 @@ describe("Bundle", () => {
   it("should display descriptions", done => {
     execFile("node", [fullCommands, "command3", "--help"], (error, stdout) => {
       expect(stdout).toMatchSnapshot();
+      done();
+    });
+  });
+
+  it("should display error", done => {
+    execFile("node", [errorCommand, "command4"], (error, stdout, stderr) => {
+      expect(stderr).toContain("Unexpected error");
       done();
     });
   });

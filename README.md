@@ -64,3 +64,18 @@ Now you can call your command like that:
 ```bash
 node console.js my-command
 ```
+
+Tests
+-----
+
+You need to install peer dependencies first:
+
+```bash
+npm install --no-save @solfege/application
+```
+
+Then run the following command:
+
+```bash
+npm test
+```

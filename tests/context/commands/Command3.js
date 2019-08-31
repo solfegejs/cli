@@ -1,6 +1,6 @@
 const AbstractCommand = require("../../../lib/Command/AbstractCommand");
 
-module.exports = class Command1 extends AbstractCommand {
+module.exports = class Command3 extends AbstractCommand {
   constructor() {
     super();
 

@@ -1,4 +1,4 @@
-module.exports = class Command1 {
+module.exports = class Command2 {
   getName() {
     return "command2";
   }

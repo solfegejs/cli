@@ -21,7 +21,9 @@
   "dependencies": {
     "colors": "^1.1",
     "commander": "^2.20.0",
-    "minimist": "^1.2"
+    "minimist": "^1.2",
+    "pretty-error": "^2.1.1",
+    "word-wrap": "^1.2.3"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
