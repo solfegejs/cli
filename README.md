@@ -1,5 +1,5 @@
-solfegejs-cli
-=============
+@solfege/cli
+============
 
 Command Line Interface of SolfegeJS
 
@@ -9,7 +9,7 @@ Installation
 
 The bundle is included by default in SolfegeJS. You don't need to install it.
 
-See [SolfegeJS](https://github.com/neolao/solfege/)
+See [SolfegeJS](https://github.com/solfegejs/solfege)
 
 
 Available commands
@@ -45,17 +45,14 @@ services:
 And your class must implement 2 methods (`getName` and `execute`):
 
 ```javascript
-export default class MyCommand
-{
-    getName()
-    {
-        return "my-command";
-    }
+module.exports = class MyCommand {
+  getName() {
+    return "my-command";
+  }
 
-    *execute(parameters, options)
-    {
-        console.log("My command executed");
-    }
+  async execute(parameters, options) {
+    console.log("My command executed");
+  }
 }
 ```
 
