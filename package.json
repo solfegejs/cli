@@ -9,7 +9,8 @@
   "repository": "https://github.com/solfegejs/cli.git",
   "license": "MIT",
   "files": [
-    "lib"
+    "lib",
+    "AbstractCommand.js"
   ],
   "main": "lib/Bundle.js",
   "engines": {
