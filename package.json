@@ -27,6 +27,7 @@
     "word-wrap": "^1.2.3"
   },
   "devDependencies": {
+    "@solfege/application": "^4.0.3",
     "eslint": "^5.16.0",
     "eslint-formatter-pretty": "^1.3.0",
     "eslint-plugin-solfegejs": "^1.0.15",
