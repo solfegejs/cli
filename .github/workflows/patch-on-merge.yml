@@ -14,8 +14,9 @@ jobs:
         
       - name: set remote url
         run: |
+          echo "$GITHUB_REF ${GITHUB_REF:11}"
           git remote set-url --push origin https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
-          git checkout "${GITHUB_REF:11}"
+          git checkout "$GITHUB_REF"
         
       - name: Patch version
         run: |
