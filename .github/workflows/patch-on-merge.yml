@@ -14,7 +14,6 @@ jobs:
         
       - name: set remote url
         run: |
-          echo "$GITHUB_REF ${GITHUB_REF:11}"
           git remote set-url --push origin https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git checkout "$GITHUB_REF"
         
@@ -38,6 +37,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Git push
-        run: git push
+        run: git push origin --tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
