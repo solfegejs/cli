@@ -9,7 +9,7 @@ jobs:
    runs-on: ubuntu-latest
    steps:
       - name: Labels
-        run: echo ${{ github.event.pull_request.labels }}
+        run: echo ${{ toJson(github.event.pull_request.labels) }}
       
       - name: Merged
         run: echo ${{ github.event.pull_request.merged }}
