@@ -1,7 +1,7 @@
 {
   "name": "@solfege/cli",
   "description": "Command Line Interface of SolfegeJS",
-  "version": "5.3.10",
+  "version": "5.3.11",
   "publishConfig": {
     "access": "public"
   },
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "colors": "^1.4.0",
-    "commander": "^2.20.0",
+    "commander": "2.20.0",
     "minimist": "^1.2",
     "pretty-error": "^2.1.1",
     "word-wrap": "^1.2.3"
