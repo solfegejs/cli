@@ -17,21 +17,21 @@
     "node": ">= 10"
   },
   "peerDependencies": {
-    "@solfege/application": "^4.0.5"
+    "@solfege/application": "^4.0.6"
   },
   "dependencies": {
     "colors": "^1.4.0",
-    "commander": "5.0.0",
+    "commander": "5.1.0",
     "minimist": "^1.2",
     "pretty-error": "^2.1.1",
     "word-wrap": "^1.2.3"
   },
   "devDependencies": {
-    "@solfege/application": "^4.0.5",
-    "eslint": "^6.8.0",
+    "@solfege/application": "^4.0.6",
+    "eslint": "^7.1.0",
     "eslint-formatter-pretty": "^3.0.1",
     "eslint-plugin-solfegejs": "^1.0.17",
-    "jest": "^25.2.7",
+    "jest": "^26.0.1",
     "watch": "^1.0.2"
   },
   "scripts": {
