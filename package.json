@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@solfege/application": "^4.0.6",
-    "eslint": "^7.2.0",
+    "eslint": "^7.3.0",
     "eslint-formatter-pretty": "^4.0.0",
     "eslint-plugin-solfegejs": "^1.0.17",
     "jest": "^26.0.1",
