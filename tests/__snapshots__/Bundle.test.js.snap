@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Bundle should display command help 1`] = `
-"Usage: command1 [options]
+"Usage: twoCommands command1 [options]
 
 Options:
-  -h, --help  output usage information
+  -h, --help  display help for command
 command1 help"
 `;
 
 exports[`Bundle should display descriptions 1`] = `
-"Usage: command3 [options] <arg1> <arg2> [arg3] [arg4]
+"Usage: fullCommands command3 [options] <arg1> <arg2> [arg3] [arg4]
 
 command3 description
 
@@ -24,7 +24,7 @@ Options:
   --opt1 <value>  Option 1 (default: \\"foo\\")
   --opt2          Option 2
   --opt3          
-  -h, --help      output usage information
+  -h, --help      display help for command
 command3 help"
 `;
 
@@ -32,11 +32,12 @@ exports[`Bundle should display help 1`] = `
 "Usage: twoCommands [options] [command]
 
 Options:
-  -h, --help  output usage information
+  -h, --help      display help for command
 
 Commands:
   command1
   command2
+  help [command]  display help for command
 "
 `;
 
@@ -44,10 +45,11 @@ exports[`Bundle should display help by default 1`] = `
 "Usage: twoCommands [options] [command]
 
 Options:
-  -h, --help  output usage information
+  -h, --help      display help for command
 
 Commands:
   command1
   command2
+  help [command]  display help for command
 "
 `;
