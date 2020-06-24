@@ -28,10 +28,10 @@
   },
   "devDependencies": {
     "@solfege/application": "^4.0.6",
-    "eslint": "^7.3.0",
+    "eslint": "^7.3.1",
     "eslint-formatter-pretty": "^4.0.0",
     "eslint-plugin-solfegejs": "^1.0.17",
-    "jest": "^26.0.1",
+    "jest": "^26.1.0",
     "watch": "^1.0.2"
   },
   "scripts": {
