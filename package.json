@@ -20,7 +20,7 @@
     "@solfege/application": "^4.0.7"
   },
   "dependencies": {
-    "colors": "^1.4.0",
+    "@dabh/colors": "^1.4.0",
     "commander": "6.0.0",
     "minimist": "^1.2",
     "pretty-error": "^2.1.1",
